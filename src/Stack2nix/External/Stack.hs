@@ -36,7 +36,7 @@ import           Stack.Types.PackageIdentifier (PackageIdentifier (..),
 import           Stack2nix.External.Cabal2nix  (cabal2nix)
 import           Stack2nix.Render              (render)
 import           Stack2nix.Types               (Args (..))
-import           Stack2nix.Util                (mapPool, logDebug, ensureExecutable)
+import           Stack2nix.Util                (mapPool, logDebug, ensureExecutableExists)
 import           System.Directory              (canonicalizePath,
                                                 createDirectoryIfMissing,
                                                 getCurrentDirectory,
@@ -108,7 +108,7 @@ runPlan baseDir remoteUri args@Args{..} = do
 
   ghcVersion <- getGhcVersionIO globals stackFile
   let ghcnixversion = filter (/= '.') $ show (getGhcVersion ghcVersion)
-  ensureExecutable ("haskell.compiler.ghc" ++ ghcnixversion)
+  ensureExecutableExists "ghc" ("haskell.compiler.ghc" ++ ghcnixversion)
   withBuildConfig globals $ planAndGenerate buildOpts baseDir remoteUri args ghcnixversion
 
 getGhcVersionIO :: GlobalOpts -> FilePath -> IO (CompilerVersion 'CVWanted)
