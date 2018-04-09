@@ -100,10 +100,8 @@ runPlan :: FilePath
         -> Maybe String
         -> Args
         -> IO ()
-runPlan baseDir remoteUri args@Args{..} = do
-  let stackRoot = "/tmp/s2n"
-  createDirectoryIfMissing True stackRoot
-  let globals = globalOpts baseDir stackRoot args
+runPlan baseDir remoteUri args@Args{..} = withSystemTempDirectory "s2n-" $ \tmpDir -> do
+  let globals = globalOpts baseDir tmpDir args
   let stackFile = baseDir </> argStackYaml
 
   ghcVersion <- getGhcVersionIO globals stackFile
